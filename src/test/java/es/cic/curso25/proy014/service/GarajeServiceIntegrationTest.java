@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import es.cic.curso25.proy014.entity.Coche;
 import es.cic.curso25.proy014.entity.Multa;
 import es.cic.curso25.proy014.entity.Plaza;
+import es.cic.curso25.proy014.exceptions.NotFoundException;
 import es.cic.curso25.proy014.repository.CocheRepository;
 import es.cic.curso25.proy014.repository.PlazaRepository;
 
@@ -63,18 +64,24 @@ public class GarajeServiceIntegrationTest {
 
     @Test
     void testGetAllCoches() {
-
+        assertTrue(garajeService.getAllCoches().size() >= 1);
     }
 
-    /*
-     * public Coche aparcar(Coche coche, Plaza plaza) {
-     * coche.setNumPlazaAparcada(plaza.getNumPlaza());
-     * if (comprobarPlazaCorrecta(coche)) {
-     * this.multarCoche(coche.getId());
-     * }
-     * return cocheRepository.save(coche);
-     * }
-     */
+    @Test
+    void testGetCoche(){
+        assertThrows(NotFoundException.class, () -> {garajeService.getCoche(3592549543L);});
+    }
+
+    @Test
+    void testGetPlazaPorNum(){
+        int numPlaza = plaza1.getNumPlaza();
+
+        Plaza plazaEncontrada = garajeService.getPlazaPorNum(numPlaza);
+
+        assertEquals(plaza1.getCoche().getId(), plazaEncontrada.getCoche().getId());
+        assertEquals(plaza1.getId(), plazaEncontrada.getId());
+        assertEquals(plaza1.getNumPlaza(), plazaEncontrada.getNumPlaza());
+    }
 
     @Test
     void testAparcar() {

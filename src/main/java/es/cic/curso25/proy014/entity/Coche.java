@@ -56,11 +56,6 @@ public class Coche {
     public Coche() {
     }
 
-    public Coche(String color, int numPuertas, Plaza plaza) {
-        this.color = color;
-        this.numPuertas = numPuertas;
-        this.plaza = plaza;
-    }
 
     public Coche(String color, int numPuertas) {
         this.color = color;
@@ -69,10 +64,6 @@ public class Coche {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getColor() {
