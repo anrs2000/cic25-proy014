@@ -14,8 +14,11 @@ public class Plaza {
 
     private int numPlaza;
 
-    @OneToOne
+    @OneToOne(mappedBy = "plaza")
     private Coche coche;
+
+    public Plaza() {
+    }
 
     public Long getId() {
         return id;

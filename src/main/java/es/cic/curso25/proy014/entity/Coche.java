@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Max;
@@ -23,12 +24,13 @@ public class Coche {
     @Max(12)
     private int numPuertas;
 
-    @OneToOne(mappedBy = "coche", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Plaza plaza;
 
     private int numPlazaAparcada;
 
-    @OneToMany(mappedBy = "coche", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "plaza_id")
     private List<Multa> multas = new ArrayList<>();
 
     public void addMulta(Multa multa) {
@@ -36,9 +38,19 @@ public class Coche {
         multa.setCoche(this);
     }
 
+    public void addPlaza(Plaza plaza) {
+        plaza.setCoche(this);
+        this.setPlaza(plaza);
+    }
+
     public void deleteMulta(Multa multa) {
         this.multas.remove(multa);
         multa.setCoche(null);
+    }
+
+    public void deletePlaza(Plaza plaza) {
+        this.setPlaza(null);
+        plaza.setCoche(null);
     }
 
     public Coche() {
@@ -101,5 +113,5 @@ public class Coche {
 
     public void setNumPlazaAparcada(int numPlazaAsignada) {
         this.numPlazaAparcada = numPlazaAsignada;
-    }    
+    }
 }

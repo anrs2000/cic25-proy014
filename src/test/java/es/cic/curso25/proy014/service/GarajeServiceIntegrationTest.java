@@ -13,6 +13,7 @@ import es.cic.curso25.proy014.entity.Coche;
 import es.cic.curso25.proy014.entity.Multa;
 import es.cic.curso25.proy014.entity.Plaza;
 import es.cic.curso25.proy014.repository.CocheRepository;
+import es.cic.curso25.proy014.repository.PlazaRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,20 +23,42 @@ public class GarajeServiceIntegrationTest {
     CocheRepository cocheRepository;
 
     @Autowired
+    PlazaRepository plazaRepository;
+
+    @Autowired
     GarajeService garajeService;
 
-    Coche coche;
-    Multa multa;
+    Coche coche1;
     Coche cocheGuardado;
-    Plaza plaza;
+    Plaza plaza1;
+    Plaza otraPlaza;
 
     @BeforeEach
     void preparacion() {
         cocheRepository.deleteAll();
-        coche = new Coche("rojo", 4);
-        multa = new Multa();
+        plazaRepository.deleteAll();
 
-        cocheGuardado = garajeService.postCoche(coche);
+        plaza1 = new Plaza();
+
+        garajeService.calcularNumPlaza(plaza1);
+
+        coche1 = new Coche("rojo", 4);
+
+        coche1.addPlaza(plaza1);
+
+        cocheGuardado = garajeService.postCoche(coche1);
+
+        // Después de haber guardado la primera plaza en BD (al guardar el coche al que
+        // va asociada), podemos asignar numero de plaza a la segunda (si no, se le
+        // asignaría el mismo)
+        otraPlaza = new Plaza();
+        garajeService.calcularNumPlaza(otraPlaza);
+    }
+
+    @Test
+    void testCalcularNumPlaza() {
+        assertEquals(1, plaza1.getNumPlaza());
+        assertEquals(2, otraPlaza.getNumPlaza());
     }
 
     @Test
@@ -43,15 +66,41 @@ public class GarajeServiceIntegrationTest {
 
     }
 
+    /*
+     * public Coche aparcar(Coche coche, Plaza plaza) {
+     * coche.setNumPlazaAparcada(plaza.getNumPlaza());
+     * if (comprobarPlazaCorrecta(coche)) {
+     * this.multarCoche(coche.getId());
+     * }
+     * return cocheRepository.save(coche);
+     * }
+     */
+
+    @Test
+    void testAparcar() {
+        int numMultasEsperado = cocheGuardado.getMultas().size() + 1;
+        garajeService.aparcar(cocheGuardado, otraPlaza);
+
+        //Traemos los datos actualizados del coche desde la BD
+        Coche cocheActualizado = garajeService.getCoche(cocheGuardado.getId());
+        assertEquals(numMultasEsperado, cocheActualizado.getMultas().size());
+
+        Plaza plazaDelCoche = cocheActualizado.getPlaza();
+        garajeService.aparcar(cocheActualizado, plazaDelCoche);
+
+        //Comprobamos que en caso de que aparque en su plaza, el número de multas no se incrementa
+        assertEquals(numMultasEsperado, cocheActualizado.getMultas().size());
+    }
+
     @Test
     void testMultarCoche() {
-        // Coche cocheMultado = garajeService.multarCoche(cocheGuardado.getId(), multa);
+        int numMultasInicial = cocheGuardado.getMultas().size();
+
         garajeService.multarCoche(cocheGuardado.getId());
 
         Coche cocheMultado = garajeService.getCoche(cocheGuardado.getId());
 
-        assertEquals(cocheMultado.getMultas().get(0).getFechaMaximaPago(), multa.getFechaMaximaPago());
-        assertEquals(cocheMultado.getMultas().get(0).getPrecio(), multa.getPrecio());
+        assertEquals(numMultasInicial + 1, cocheMultado.getMultas().size());
     }
 
     @Test
