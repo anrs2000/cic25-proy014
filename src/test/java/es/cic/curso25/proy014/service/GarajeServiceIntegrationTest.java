@@ -34,6 +34,8 @@ public class GarajeServiceIntegrationTest {
     Plaza plaza1;
     Plaza otraPlaza;
 
+    Coche coche2;
+
     @BeforeEach
     void preparacion() {
         cocheRepository.deleteAll();
@@ -54,6 +56,10 @@ public class GarajeServiceIntegrationTest {
         // asignaría el mismo)
         otraPlaza = new Plaza();
         garajeService.calcularNumPlaza(otraPlaza);
+
+        coche2 = new Coche("verde", 5);
+        coche2.addPlaza(otraPlaza);
+        garajeService.postCoche(coche2);
     }
 
     @Test
@@ -86,17 +92,23 @@ public class GarajeServiceIntegrationTest {
     @Test
     void testAparcar() {
         int numMultasEsperado = cocheGuardado.getMultas().size() + 1;
-        garajeService.aparcar(cocheGuardado, otraPlaza);
+        garajeService.aparcar(cocheGuardado.getId(), otraPlaza.getId());
 
         //Traemos los datos actualizados del coche desde la BD
-        Coche cocheActualizado = garajeService.getCoche(cocheGuardado.getId());
-        assertEquals(numMultasEsperado, cocheActualizado.getMultas().size());
+        cocheGuardado = garajeService.getCoche(cocheGuardado.getId());
+        assertEquals(numMultasEsperado, cocheGuardado.getMultas().size());
 
-        Plaza plazaDelCoche = cocheActualizado.getPlaza();
-        garajeService.aparcar(cocheActualizado, plazaDelCoche);
+        Plaza plazaDelCoche = cocheGuardado.getPlaza();
+        garajeService.aparcar(cocheGuardado.getId(), plazaDelCoche.getId());
 
         //Comprobamos que en caso de que aparque en su plaza, el número de multas no se incrementa
-        assertEquals(numMultasEsperado, cocheActualizado.getMultas().size());
+        assertEquals(numMultasEsperado, cocheGuardado.getMultas().size());
+
+        //El coche vuelve a aparcar donde no le corresponde
+        garajeService.aparcar(cocheGuardado.getId(), otraPlaza.getId());     
+
+        //Por tanto, tendrá 2 multas
+        assertEquals(2, garajeService.getAllMultasDeCoche(cocheGuardado.getId()).size());
     }
 
     @Test

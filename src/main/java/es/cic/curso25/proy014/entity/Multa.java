@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -19,6 +20,7 @@ public class Multa {
     private LocalDate fechaMaximaPago;
 
     @ManyToOne
+    @JoinColumn(name = "coche_id")
     private Coche coche;
 
     public Multa() {

@@ -25,12 +25,12 @@ public class Coche {
     private int numPuertas;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "plaza_id")
     private Plaza plaza;
 
     private int numPlazaAparcada;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "plaza_id")
     private List<Multa> multas = new ArrayList<>();
 
     public void addMulta(Multa multa) {
