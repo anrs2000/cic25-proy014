@@ -1,16 +1,11 @@
 package es.cic.curso25.proy014.service;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import es.cic.curso25.proy014.entity.Coche;
-import es.cic.curso25.proy014.entity.Multa;
 import es.cic.curso25.proy014.entity.Plaza;
 import es.cic.curso25.proy014.exceptions.NotFoundException;
 import es.cic.curso25.proy014.repository.CocheRepository;

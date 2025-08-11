@@ -66,21 +66,14 @@ public class GarajeControllerIntegrationTest {
         plaza3 = garajeController.getPlazaDelCoche(cocheGuardado3.getId());
     }
 
-    /*
-     * @PutMapping("/aparcar/{idPlaza}/{idCoche}")
-     * public Coche aparcar(@PathVariable Long idCoche, @PathVariable Long idPlaza)
-     * {
-     * LOGGER.info(String.
-     * format("PUT /coches/aparcar/%d/%d - aparcar coche en plaza", idPlaza,
-     * idCoche));
-     * return garajeService.aparcar(idCoche, idPlaza);
-     * }
-     */
     @Test
     void testAparcar() throws Exception {
         mockMvc.perform(put(String.format("/coches/aparcar/%d/%d", cocheGuardado1.getId(), plaza1.getId()))
                 .contentType("application/json"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+
+                });
     }
 
     @Test

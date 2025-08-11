@@ -75,7 +75,7 @@ public class GarajeController {
         return garajeService.putCoche(id, nuevoCoche);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/nuevaPlaza")
     public Coche addPlaza(@PathVariable("id") Long idCoche, @RequestBody Plaza plaza) {
         garajeService.calcularNumPlaza(plaza);
         return garajeService.addPlazaCoche(idCoche, plaza);
